@@ -6,25 +6,25 @@
 #include <cstdlib>
 
 big_integer::big_integer() {
-    a.resize(0);
+    arr.resize(0);
     sign = false;
 }
 
 big_integer::big_integer(const big_integer &that) {
-    a.resize(that.a.size());
-    for (size_t i = 0; i < a.size(); i++) {
-        a[i] = that.a[i];
+    arr.resize(that.arr.size());
+    for (size_t i = 0; i < arr.size(); i++) {
+        arr[i] = that.arr[i];
     }
     sign = that.sign;
 }
 
 big_integer::big_integer(const int val) {
     if (val == 0) {
-        a.resize(0);
+        arr.resize(0);
         sign = false;
     } else {
-        a.resize(1);
-        a[0] = (uint64_t) abs(val);
+        arr.resize(1);
+        arr[0] = (uint64_t) abs(val);
         sign = val < 0;
     }
 }
@@ -36,8 +36,6 @@ big_integer::big_integer(string s) {
         *this *= radix;
         *this += big_integer(s[i] - '0');
     }
-
-    //1844674407370955161618446744073709551616
 
     sign = s[0] == '-';
 }

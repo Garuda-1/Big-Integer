@@ -4,37 +4,37 @@
 
 #include "big_integer.h"
 
-bool big_integer::operator<(const big_integer &that) const {
-    if (sign != that.sign) {
-        return sign > that.sign;
+bool operator<(const big_integer &a, const big_integer &b) {
+    if (a.sign != b.sign) {
+        return a.sign > b.sign;
     }
-    int32_t cmp = this->modular_compare(that);
-    return cmp != 0 && sign ^ (cmp == -1);
+    int32_t cmp = a.modular_compare(b);
+    return cmp != 0 && a.sign ^ (cmp == -1);
 }
 
-bool big_integer::operator>(const big_integer &that) const {
-    if (sign != that.sign) {
-        return sign < that.sign;
+bool operator>(const big_integer &a, const big_integer &b) {
+    if (a.sign != b.sign) {
+        return a.sign < b.sign;
     }
-    int32_t cmp = this->modular_compare(that);
-    return cmp != 0 && sign ^ (cmp == 1);
+    int32_t cmp = a.modular_compare(b);
+    return cmp != 0 && a.sign ^ (cmp == 1);
 }
 
-bool big_integer::operator<=(const big_integer &that) const {
-    return !(*this > that);
+bool operator<=(const big_integer &a, const big_integer &b) {
+    return !(a > b);
 }
 
-bool big_integer::operator>=(const big_integer &that) const {
-    return !(*this < that);
+bool operator>=(const big_integer &a, const big_integer &b) {
+    return !(a < b);
 }
 
-bool big_integer::operator==(const big_integer &that) const {
-    if (sign != that.sign) {
+bool operator==(const big_integer &a, const big_integer &b) {
+    if (a.sign != b.sign) {
         return false;
     }
-    return this->modular_compare(that) == 0;
+    return a.modular_compare(b) == 0;
 }
 
-bool big_integer::operator!=(const big_integer &that) const {
-    return !(*this == that);
+bool operator!=(const big_integer &a, const big_integer &b) {
+    return !(a == b);
 }

@@ -54,7 +54,7 @@ int32_t big_integer::modular_compare(const big_integer &that) const {
     return 0;
 }
 
-big_integer big_integer::operator*(uint64_t val) const {
+big_integer big_integer::mul_internal(uint64_t val) const {
     uint64_t carry = 0;
     size_t op_size = arr.size();
 
@@ -63,7 +63,7 @@ big_integer big_integer::operator*(uint64_t val) const {
     for (size_t i = 0; i < op_size; i++) {
         uint64_t d1 = arr[i];
         uint64_t d0;
-        asm (
+        __asm__ (
         "mul %%rbx;"
         "add %%rcx, %%rax;"
         "adc $0, %%rdx;"
@@ -80,7 +80,7 @@ big_integer big_integer::operator*(uint64_t val) const {
     return res;
 }
 
-pair<big_integer, uint64_t> big_integer::operator/(uint64_t val) const {
+pair<big_integer, uint64_t> big_integer::div_internal(uint64_t val) const {
     uint64_t carry = 0;
     size_t op_size = arr.size();
 
@@ -100,16 +100,20 @@ pair<big_integer, uint64_t> big_integer::operator/(uint64_t val) const {
     reverse(res.arr.begin(), res.arr.end());
 
     res.shrink();
-    return pair(res, carry);
+    return pair<big_integer, uint64_t>(res, carry);
 }
 
 pair<big_integer, big_integer> big_integer::divide_mod(const big_integer &that) const {
     big_integer ret;
 
     if (that.arr.size() == 1) {
-        auto tmp = (*this / that.arr[0]);
+        auto tmp = (this->div_internal(that.arr[0]));
         tmp.first.sign = (tmp.first != 0) && (sign ^ that.sign);
-        return pair<big_integer, big_integer>(tmp.first, tmp.second);
+
+        big_integer remainder = big_integer(to_string(tmp.second));
+        remainder.sign = (remainder != 0) && sign;
+
+        return pair<big_integer, big_integer>(tmp.first, remainder);
     }
     if (arr.size() < that.arr.size()) {
         return pair<big_integer, big_integer>(0, *this);
@@ -119,7 +123,7 @@ pair<big_integer, big_integer> big_integer::divide_mod(const big_integer &that) 
     big_integer divisor(that);
     dividend.sign = false;
     divisor.sign = false;
-    normalize(dividend, divisor);
+    big_integer normalizer = normalize(dividend, divisor);
 
     size_t n = divisor.arr.size();
     size_t m = dividend.arr.size() - n;
@@ -133,7 +137,7 @@ pair<big_integer, big_integer> big_integer::divide_mod(const big_integer &that) 
         big_integer d;
         d.arr.push_back(dividend.arr[n + i - 1]);
         d.arr.push_back(dividend.arr[n + i]);
-        d = (d / divisor.arr[n - 1]).first;
+        d = (d.div_internal(divisor.arr[n - 1])).first;
         if (d.arr.size() > 1) {
             d.arr.resize(0);
             d.arr.push_back(numeric_limits<uint64_t>::max());
@@ -149,6 +153,8 @@ pair<big_integer, big_integer> big_integer::divide_mod(const big_integer &that) 
 
     reverse(ret.arr.begin(), ret.arr.end());
     ret.sign = (ret != 0) && (sign ^ that.sign);
+    dividend /= normalizer;
+    dividend.sign = (dividend != 0) && sign;
     return pair<big_integer, big_integer>(ret, dividend);
 }
 
@@ -181,10 +187,14 @@ void big_integer::shrink() {
     size_t i = arr.size();
     while (i > 0 && arr[i - 1] == 0) --i;
     arr.resize(i);
+    if (arr.empty()) {
+        sign = false;
+    }
 }
 
-void big_integer::normalize(big_integer &a, big_integer &b) const {
-    big_integer normalizer = (big_integer(1).shl_64_bitwise(1) / (b.arr[b.arr.size() - 1] + 1)).first;
+big_integer big_integer::normalize(big_integer &a, big_integer &b) const {
+    big_integer normalizer = (big_integer(1).shl_64_bitwise(1).div_internal(b.arr[b.arr.size() - 1] + 1)).first;
     a *= normalizer;
     b *= normalizer;
+    return normalizer;
 }

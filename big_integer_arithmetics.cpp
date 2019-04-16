@@ -13,121 +13,125 @@ big_integer big_integer::operator+() const {
 
 big_integer big_integer::operator-() const {
     big_integer ret(*this);
-    ret.sign ^= true;
-
+    ret.sign = (!arr.empty()) && (!ret.sign);
     return ret;
 }
 
 big_integer operator+(const big_integer &a, const big_integer &b) {
-    big_integer ret;
-
-    if (!a.sign && !b.sign) {
-        ret = a.modular_add(b);
-        ret.sign = false;
-    }
-    if (!a.sign && b.sign) {
-        if (a.modular_compare(b) < 0) {
-            ret = b.modular_subtract(a);
-            ret.sign = true;
-        } else {
-            ret = a.modular_subtract(b);
-            ret.sign = false;
-        }
-    }
-    if (a.sign && !b.sign) {
-        if (a.modular_compare(b) <= 0) {
-            ret = b.modular_subtract(a);
-            ret.sign = false;
-        } else {
-            ret = a.modular_subtract(b);
-            ret.sign = true;
-        }
-    }
-    if (a.sign && b.sign) {
-        ret = a.modular_add(b);
-        ret.sign = true;
-    }
-
+    big_integer ret = a;
+    ret += b;
     return ret;
 }
 
 big_integer operator-(const big_integer &a, const big_integer &b) {
-    big_integer ret;
-
-    if (!a.sign && !b.sign) {
-        if (a.modular_compare(b) < 0) {
-            ret = b.modular_subtract(a);
-            ret.sign = true;
-        } else {
-            ret = a.modular_subtract(b);
-            ret.sign = false;
-        }
-    }
-    if (!a.sign && b.sign) {
-        ret = a.modular_add(b);
-        ret.sign = false;
-    }
-    if (a.sign && !b.sign) {
-        ret = a.modular_add(b);
-        ret.sign = true;
-    }
-    if (a.sign && b.sign) {
-        if (a.modular_compare(b) <= 0) {
-            ret = b.modular_subtract(a);
-            ret.sign = false;
-        } else {
-            ret = a.modular_subtract(b);
-            ret.sign = true;
-        }
-    }
-
+    big_integer ret = a;
+    ret -= b;
     return ret;
 }
 
 big_integer operator*(const big_integer &a, const big_integer &b) {
-    size_t op_size = a.arr.size();
-
-    big_integer ret;
-
-    for (size_t i = 0; i < op_size; i++) {
-        ret += (b * a.arr[i]).shl_64_bitwise(i);
-    }
-
-    ret.shrink();
-    ret.sign = (ret != 0) && (a.sign ^ b.sign);
+    big_integer ret = a;
+    ret *= b;
     return ret;
 }
 
 big_integer operator/(const big_integer &a, const big_integer &b) {
-    return a.divide_mod(b).first;
+    big_integer ret = a;
+    ret /= b;
+    return ret;
 }
 
 big_integer operator%(const big_integer &a, const big_integer &b) {
-    return a.divide_mod(b).second;
+    big_integer ret = a;
+    ret %= b;
+    return ret;
 }
 
 big_integer& big_integer::operator+=(const big_integer &that) {
-    *this = *this + that;
+    if (!sign && !that.sign) {
+        *this = this->modular_add(that);
+        sign = false;
+    }
+    else if (!sign && that.sign) {
+        if (this->modular_compare(that) < 0) {
+            *this = that.modular_subtract(*this);
+            sign = true;
+        } else {
+            *this = this->modular_subtract(that);
+            sign = false;
+        }
+    }
+    else if (sign && !that.sign) {
+        if (this->modular_compare(that) <= 0) {
+            *this = that.modular_subtract(*this);
+            sign = false;
+        } else {
+            *this = this->modular_subtract(that);
+            sign = true;
+        }
+    }
+    else if (sign && that.sign) {
+        *this = this->modular_add(that);
+        sign = true;
+    }
+
     return *this;
 }
 
 big_integer& big_integer::operator-=(const big_integer &that) {
-    *this = *this - that;
+    if (!sign && !that.sign) {
+        if (this->modular_compare(that) < 0) {
+            *this = that.modular_subtract(*this);
+            sign = true;
+        } else {
+            *this = this->modular_subtract(that);
+            sign = false;
+        }
+    }
+    else if (!sign && that.sign) {
+        *this = this->modular_add(that);
+        sign = false;
+    }
+    else if (sign && !that.sign) {
+        *this = this->modular_add(that);
+        sign = true;
+    }
+    else if (sign && that.sign) {
+        if (this->modular_compare(that) <= 0) {
+            *this = that.modular_subtract(*this);
+            sign = false;
+        } else {
+            *this = this->modular_subtract(that);
+            sign = true;
+        }
+    }
+
     return *this;
 }
 
 big_integer& big_integer::operator*=(const big_integer &that) {
-    *this = *this * that;
+    size_t op_size = arr.size();
+
+    big_integer ret;
+
+    for (size_t i = 0; i < op_size; i++) {
+        ret += (that.mul_internal(arr[i])).shl_64_bitwise(i);
+    }
+
+    ret.shrink();
+    ret.sign = (ret != 0) && (sign ^ that.sign);
+    *this = ret;
+
     return *this;
 }
 
 big_integer& big_integer::operator/=(const big_integer &that) {
-    *this = *this / that;
+    *this = this->divide_mod(that).first;
     return *this;
 }
 
 big_integer& big_integer::operator%=(const big_integer &that) {
-    *this = *this % that;
+    *this = this->divide_mod(that).second;
     return *this;
 }
 

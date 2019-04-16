@@ -24,7 +24,7 @@ big_integer::big_integer(const int val) {
         sign = false;
     } else {
         arr.resize(1);
-        arr[0] = (uint64_t) abs(val);
+        arr[0] = (uint64_t) ((val > 0) ? val : -((int64_t) val));
         sign = val < 0;
     }
 }
@@ -37,5 +37,5 @@ big_integer::big_integer(string s) {
         *this += big_integer(s[i] - '0');
     }
 
-    sign = s[0] == '-';
+    sign = (!arr.empty()) && (s[0] == '-');
 }

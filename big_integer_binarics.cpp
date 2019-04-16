@@ -70,10 +70,7 @@ big_integer& big_integer::operator^=(const big_integer &that) {
 big_integer big_integer::operator~() const {
     big_integer ret;
 
-    for (uint64_t d : arr) {
-        ret.arr.push_back(~d);
-    }
-    ret.sign = ~sign;
+    ret = -*this - 1;
 
     return ret;
 }

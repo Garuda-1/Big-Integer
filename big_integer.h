@@ -67,8 +67,8 @@ public:
     friend string to_string(const big_integer &a);
 
 private:
-    big_integer operator*(uint64_t val) const;
-    pair<big_integer, uint64_t> operator/(uint64_t val) const;
+    big_integer mul_internal(uint64_t val) const;
+    pair<big_integer, uint64_t> div_internal(uint64_t val) const;
 
     big_integer shl_64_bitwise(size_t n) const;
     big_integer shr_64_bitwise(size_t n) const;
@@ -79,7 +79,7 @@ private:
     pair<big_integer, big_integer> divide_mod(const big_integer &that) const;
 
     void shrink();
-    void normalize(big_integer &a, big_integer &b) const;
+    big_integer normalize(big_integer &a, big_integer &b) const;
 
     vector<uint64_t> arr;
     bool sign;

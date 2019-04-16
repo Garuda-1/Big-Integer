@@ -137,6 +137,8 @@ void run_testing() {
 
 int main() {
     run_testing();
-
+//    big_integer a("1");
+//    big_integer b("-2");
+//    cout << to_string(a + b) << endl;
     return 0;
 }

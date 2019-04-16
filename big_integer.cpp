@@ -28,7 +28,7 @@ string to_string(const big_integer &a) {
     bool sign = a < 0;
 
     while (tmp != 0) {
-        auto p = tmp / radix;
+        auto p = tmp.div_internal(radix);
         ret.append(to_string(p.second));
         tmp = p.first;
     }

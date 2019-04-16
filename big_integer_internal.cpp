@@ -67,8 +67,8 @@ big_integer big_integer::operator*(uint64_t val) const {
         "mul %%rbx;"
         "add %%rcx, %%rax;"
         "adc $0, %%rdx;"
-        : "=arr" (d0), "=d" (carry)
-        : "arr" (d1), "b" (val), "c" (carry));
+        : "=a" (d0), "=d" (carry)
+        : "a" (d1), "b" (val), "c" (carry));
         res.arr.push_back(d0);
     }
 
@@ -91,8 +91,8 @@ pair<big_integer, uint64_t> big_integer::operator/(uint64_t val) const {
         uint64_t d0;
         __asm__ (
         "div %%rbx"
-        : "=arr" (d0), "=d" (carry)
-        : "arr" (d1), "b" (val), "d" (carry)
+        : "=a" (d0), "=d" (carry)
+        : "a" (d1), "b" (val), "d" (carry)
         );
         res.arr.push_back(d0);
     }

@@ -128,19 +128,15 @@ void run_testing_section_arithm(const string &section_name) {
 
 void run_testing() {
     run_testing_section_cmp();
-//    run_testing_section_arithm("add");
-//    run_testing_section_arithm("subtract");
-//    run_testing_section_arithm("multiply");
-//    run_testing_section_arithm("divide");
-//    run_testing_section_arithm("mod");
+    run_testing_section_arithm("add");
+    run_testing_section_arithm("subtract");
+    run_testing_section_arithm("multiply");
+    run_testing_section_arithm("divide");
+    run_testing_section_arithm("mod");
 }
 
 int main() {
-//    run_testing();
-    big_integer a("139200307093965319672144492835006816790592169903953983449012030717602390026118332958478844058907665780440043902419586804867732270729665736052038161656488707862023726928738837104539283005341698849139926045927330253929585064643814963761329048787787772216749595937353009904689724839294542089216907534501976300626433116382522827958448063128928691209697418084901679224297621741368887436564950528035219016401895746414516224");
-    big_integer b("26908250421761432645716825456610429252755394075327028195889643329373601741925280766171230916608");
-
-    cout << (a < b) << endl;
+    run_testing();
 
     return 0;
 }

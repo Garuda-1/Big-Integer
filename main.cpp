@@ -136,10 +136,11 @@ void run_testing() {
 }
 
 int main() {
-//    run_testing();
-    big_integer a = 0x55;
-    big_integer b = 0xaa;
+    big_integer a("-1591563309890326054125627839548891585559049824963");
+    big_integer b("-3417856182746231874623148723164812376512852437523846123876");
 
-    cout << ((a | (b - 256)) == -1) << endl;
+    cout << to_string(b >> 31) << endl;
+
+
     return 0;
 }

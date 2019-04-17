@@ -97,6 +97,9 @@ big_integer operator<<(const big_integer &a, uint32_t shift) {
 
 big_integer operator>>(const big_integer &a, uint32_t shift) {
     big_integer ret = a.shr_64_bitwise(shift / 64);
+    bool tmp_sign = a.sign;
+    ret.sign = false;
+
     shift %= 64;
     uint64_t carry = 0;
     uint64_t next_carry = 0;
@@ -108,6 +111,9 @@ big_integer operator>>(const big_integer &a, uint32_t shift) {
     }
 
     ret.shrink();
+    if (tmp_sign) {
+        ret = -ret - 1;
+    }
 
     return ret;
 }

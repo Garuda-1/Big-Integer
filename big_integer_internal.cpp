@@ -51,6 +51,7 @@ int32_t big_integer::modular_compare(const big_integer &that) const {
             return (arr[arr.size() - i - 1] < that.arr[that.arr.size() - i - 1]) ? -1 : 1;
         }
     }
+
     return 0;
 }
 

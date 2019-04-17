@@ -78,6 +78,9 @@ private:
     int32_t modular_compare(const big_integer &that) const;
     pair<big_integer, big_integer> divide_mod(const big_integer &that) const;
 
+    big_integer bitwise_convert(size_t len) const;
+    big_integer bitwise_revert() const;
+
     void shrink();
     big_integer normalize(big_integer &a, big_integer &b) const;
 

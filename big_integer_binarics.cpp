@@ -8,47 +8,48 @@
 big_integer operator&(const big_integer &a, const big_integer &b) {
     big_integer ret;
 
-    size_t op_size = max(a.arr.size(), b.arr.size());
+    size_t op_size = max(a.arr.size(), b.arr.size()) + 1;
+
+    big_integer op0 = a.bitwise_convert(op_size);
+    big_integer op1 = b.bitwise_convert(op_size);
 
     for (size_t i = 0; i < op_size; i++) {
-        uint64_t d0 = (i < a.arr.size()) ? a.arr[i] : 0;
-        uint64_t d1 = (i < b.arr.size()) ? b.arr[i] : 0;
-
-        ret.arr.push_back(d0 & d1);
+        ret.arr.push_back(op0.arr[i] & op1.arr[i]);
     }
-    ret.sign = a.sign & b.sign;
-
+    ret = ret.bitwise_revert();
+    ret.shrink();
     return ret;
 }
 
 big_integer operator|(const big_integer &a, const big_integer &b) {
     big_integer ret;
 
-    size_t op_size = max(a.arr.size(), b.arr.size());
+    size_t op_size = max(a.arr.size(), b.arr.size()) + 1;
+
+    big_integer op0 = a.bitwise_convert(op_size);
+    big_integer op1 = b.bitwise_convert(op_size);
 
     for (size_t i = 0; i < op_size; i++) {
-        uint64_t d0 = (i < a.arr.size()) ? a.arr[i] : 0;
-        uint64_t d1 = (i < b.arr.size()) ? b.arr[i] : 0;
-        ret.arr.push_back(d0 | d1);
+        ret.arr.push_back(op0.arr[i] | op1.arr[i]);
     }
-    ret.sign = a.sign | b.sign;
-
+    ret = ret.bitwise_revert();
+    ret.shrink();
     return ret;
 }
 
 big_integer operator^(const big_integer &a, const big_integer &b) {
     big_integer ret;
 
-    size_t op_size = max(a.arr.size(), b.arr.size());
+    size_t op_size = max(a.arr.size(), b.arr.size()) + 1;
+
+    big_integer op0 = a.bitwise_convert(op_size);
+    big_integer op1 = b.bitwise_convert(op_size);
 
     for (size_t i = 0; i < op_size; i++) {
-        uint64_t d0 = (i < a.arr.size()) ? a.arr[i] : 0;
-        uint64_t d1 = (i < b.arr.size()) ? b.arr[i] : 0;
-
-        ret.arr.push_back(d0 ^ d1);
+        ret.arr.push_back(op0.arr[i] ^ op1.arr[i]);
     }
-    ret.sign = a.sign ^ b.sign;
-
+    ret = ret.bitwise_revert();
+    ret.shrink();
     return ret;
 }
 

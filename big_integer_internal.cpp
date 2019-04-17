@@ -183,6 +183,40 @@ big_integer big_integer::shr_64_bitwise(size_t n) const {
     return ret;
 }
 
+big_integer big_integer::bitwise_convert(size_t len) const {
+    big_integer ret(*this);
+    ret.sign = false;
+
+    if (!sign) {
+        ret.arr.resize(len, 0);
+    } else {
+        for (unsigned long & i : ret.arr) {
+            i = ~i;
+        }
+        ret.arr.resize(len, ~((uint64_t) 0));
+        ++ret;
+    }
+
+    return ret;
+}
+
+big_integer big_integer::bitwise_revert() const {
+    big_integer ret(*this);
+
+    bool tmp_sign = (!ret.arr.empty()) && (arr[arr.size() - 1] >> 63U);
+
+    if (tmp_sign) {
+        --ret;
+        for (unsigned long &i : ret.arr) {
+            i = ~i;
+        }
+        ret.shrink();
+        ret.sign = tmp_sign;
+    }
+
+    return ret;
+}
+
 void big_integer::shrink() {
     size_t i = arr.size();
     while (i > 0 && arr[i - 1] == 0) --i;

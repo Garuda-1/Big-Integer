@@ -4,7 +4,6 @@
 
 #include <limits>
 #include <algorithm>
-#include <iostream>
 #include "big_integer.h"
 
 big_integer big_integer::operator+() const {
@@ -18,38 +17,38 @@ big_integer big_integer::operator-() const {
 }
 
 big_integer operator+(const big_integer &a, const big_integer &b) {
-    big_integer ret = a;
+    big_integer ret(a);
     ret += b;
     return ret;
 }
 
 big_integer operator-(const big_integer &a, const big_integer &b) {
-    big_integer ret = a;
+    big_integer ret(a);
     ret -= b;
     return ret;
 }
 
 big_integer operator*(const big_integer &a, const big_integer &b) {
-    big_integer ret = a;
+    big_integer ret(a);
     ret *= b;
     return ret;
 }
 
 big_integer operator/(const big_integer &a, const big_integer &b) {
-    big_integer ret = a;
+    big_integer ret(a);
     ret /= b;
     return ret;
 }
 
 big_integer operator%(const big_integer &a, const big_integer &b) {
-    big_integer ret = a;
+    big_integer ret(a);
     ret %= b;
     return ret;
 }
 
 big_integer& big_integer::operator+=(const big_integer &that) {
     if (!sign && !that.sign) {
-        *this = this->modular_add(that);
+        this->modular_add(that);
         sign = false;
     }
     else if (!sign && that.sign) {
@@ -71,7 +70,7 @@ big_integer& big_integer::operator+=(const big_integer &that) {
         }
     }
     else if (sign && that.sign) {
-        *this = this->modular_add(that);
+        this->modular_add(that);
         sign = true;
     }
 
@@ -89,11 +88,11 @@ big_integer& big_integer::operator-=(const big_integer &that) {
         }
     }
     else if (!sign && that.sign) {
-        *this = this->modular_add(that);
+        this->modular_add(that);
         sign = false;
     }
     else if (sign && !that.sign) {
-        *this = this->modular_add(that);
+        this->modular_add(that);
         sign = true;
     }
     else if (sign && that.sign) {

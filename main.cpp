@@ -108,6 +108,10 @@ void run_testing_section_arithm(const string &section_name) {
         }
         if (section_name == "multiply") {
             c = a * b;
+            if (c / a != b) {
+                run_testing_fail(operand_a, operand_b, "Div check failure", expected);
+                return;
+            }
         }
         if (section_name == "divide") {
             c = a / b;
@@ -127,20 +131,21 @@ void run_testing_section_arithm(const string &section_name) {
 }
 
 void run_testing() {
-    run_testing_section_cmp();
-    run_testing_section_arithm("add");
-    run_testing_section_arithm("subtract");
+//    run_testing_section_cmp();
+//    run_testing_section_arithm("add");
+//    run_testing_section_arithm("subtract");
     run_testing_section_arithm("multiply");
     run_testing_section_arithm("divide");
     run_testing_section_arithm("mod");
+//    run_testing_section_arithm("mul_div");
 }
 
 int main() {
-    big_integer a("-1591563309890326054125627839548891585559049824963");
-    big_integer b("-3417856182746231874623148723164812376512852437523846123876");
+//    run_testing();
+    big_integer a("-161421460487028331971537548576822011212185600");
+    big_integer b("-452824162618903963575681456883502923232992935333068800000000000000000");
+    cout << to_string(a * b) << endl;
 
-    cout << to_string(b >> 31) << endl;
-
-
+    cout << to_string((a * b) / a) << endl;
     return 0;
 }

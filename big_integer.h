@@ -66,14 +66,20 @@ public:
 
     friend string to_string(const big_integer &a);
 
+    friend int main();
+
 private:
+    big_integer(uint64_t val);
+
+    uint64_t digit_internal(size_t i) const;
+
     big_integer mul_internal(uint64_t val) const;
     pair<big_integer, uint64_t> div_internal(uint64_t val) const;
 
-    big_integer shl_64_bitwise(size_t n) const;
-    big_integer shr_64_bitwise(size_t n) const;
+    big_integer& shl_64_bitwise(size_t n);
+    big_integer& shr_64_bitwise(size_t n);
 
-    big_integer modular_add(const big_integer &that) const;
+    void modular_add(const big_integer &that);
     big_integer modular_subtract(const big_integer &that) const;
     int32_t modular_compare(const big_integer &that) const;
     pair<big_integer, big_integer> divide_mod(const big_integer &that) const;
@@ -82,7 +88,7 @@ private:
     big_integer bitwise_revert() const;
 
     void shrink();
-    big_integer normalize(big_integer &a, big_integer &b) const;
+    uint64_t normalize(big_integer &a, big_integer &b) const;
 
     vector<uint64_t> arr;
     bool sign;

@@ -131,21 +131,15 @@ void run_testing_section_arithm(const string &section_name) {
 }
 
 void run_testing() {
-//    run_testing_section_cmp();
-//    run_testing_section_arithm("add");
-//    run_testing_section_arithm("subtract");
+    run_testing_section_cmp();
+    run_testing_section_arithm("add");
+    run_testing_section_arithm("subtract");
     run_testing_section_arithm("multiply");
     run_testing_section_arithm("divide");
     run_testing_section_arithm("mod");
-//    run_testing_section_arithm("mul_div");
 }
 
 int main() {
-//    run_testing();
-    big_integer a("-161421460487028331971537548576822011212185600");
-    big_integer b("-452824162618903963575681456883502923232992935333068800000000000000000");
-    cout << to_string(a * b) << endl;
-
-    cout << to_string((a * b) / a) << endl;
+    run_testing();
     return 0;
 }

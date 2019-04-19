@@ -7,9 +7,9 @@
 
 big_integer &big_integer::operator=(const big_integer &that) {
     if (this != &that) {
-        arr.resize(that.arr.size());
-        for (size_t i = 0; i < arr.size(); i++) {
-            arr[i] = that.arr[i];
+        _arr.resize(that._arr.size());
+        for (size_t i = 0; i < _arr.size(); i++) {
+            _arr[i] = that._arr[i];
         }
         sign = that.sign;
     }
@@ -28,7 +28,7 @@ string to_string(const big_integer &a) {
     bool sign = a < 0;
 
     while (tmp != 0) {
-        auto p = tmp.div_internal(radix);
+        auto p = tmp._div(radix);
         ret.append(to_string(p.second));
         tmp = p.first;
     }

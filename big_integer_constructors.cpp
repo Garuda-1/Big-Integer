@@ -6,25 +6,25 @@
 #include <cstdlib>
 
 big_integer::big_integer() {
-    arr.resize(0);
+    _arr.resize(0);
     sign = false;
 }
 
 big_integer::big_integer(const big_integer &that) {
-    arr.resize(that.arr.size());
-    for (size_t i = 0; i < arr.size(); i++) {
-        arr[i] = that.arr[i];
+    _arr.resize(that._arr.size());
+    for (size_t i = 0; i < _arr.size(); i++) {
+        _arr[i] = that._arr[i];
     }
     sign = that.sign;
 }
 
 big_integer::big_integer(const int val) {
     if (val == 0) {
-        arr.resize(0);
+        _arr.resize(0);
         sign = false;
     } else {
-        arr.resize(1);
-        arr[0] = (uint64_t) ((val > 0) ? val : -((int64_t) val));
+        _arr.resize(1);
+        _arr[0] = (uint64_t) ((val > 0) ? val : -((int64_t) val));
         sign = val < 0;
     }
 }
@@ -37,5 +37,5 @@ big_integer::big_integer(string s) {
         *this += big_integer(s[i] - '0');
     }
 
-    sign = (!arr.empty()) && (s[0] == '-');
+    sign = (!_arr.empty()) && (s[0] == '-');
 }

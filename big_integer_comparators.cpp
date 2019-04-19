@@ -8,7 +8,7 @@ bool operator<(const big_integer &a, const big_integer &b) {
     if (a.sign != b.sign) {
         return a.sign > b.sign;
     }
-    int32_t cmp = a.modular_compare(b);
+    int32_t cmp = a._compare(b);
     return cmp != 0 && a.sign ^ (cmp == -1);
 }
 
@@ -16,7 +16,7 @@ bool operator>(const big_integer &a, const big_integer &b) {
     if (a.sign != b.sign) {
         return a.sign < b.sign;
     }
-    int32_t cmp = a.modular_compare(b);
+    int32_t cmp = a._compare(b);
     return cmp != 0 && a.sign ^ (cmp == 1);
 }
 
@@ -32,7 +32,7 @@ bool operator==(const big_integer &a, const big_integer &b) {
     if (a.sign != b.sign) {
         return false;
     }
-    return a.modular_compare(b) == 0;
+    return a._compare(b) == 0;
 }
 
 bool operator!=(const big_integer &a, const big_integer &b) {

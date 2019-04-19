@@ -12,7 +12,7 @@ big_integer big_integer::operator+() const {
 
 big_integer big_integer::operator-() const {
     big_integer ret(*this);
-    ret.sign = (!arr.empty()) && (!ret.sign);
+    ret.sign = (!_arr.empty()) && (!ret.sign);
     return ret;
 }
 
@@ -48,29 +48,29 @@ big_integer operator%(const big_integer &a, const big_integer &b) {
 
 big_integer& big_integer::operator+=(const big_integer &that) {
     if (!sign && !that.sign) {
-        this->modular_add(that);
+        this->_add(that);
         sign = false;
     }
     else if (!sign && that.sign) {
-        if (this->modular_compare(that) < 0) {
-            *this = that.modular_subtract(*this);
+        if (this->_compare(that) < 0) {
+            *this = that._subtract(*this);
             sign = true;
         } else {
-            *this = this->modular_subtract(that);
+            *this = this->_subtract(that);
             sign = false;
         }
     }
     else if (sign && !that.sign) {
-        if (this->modular_compare(that) <= 0) {
-            *this = that.modular_subtract(*this);
+        if (this->_compare(that) <= 0) {
+            *this = that._subtract(*this);
             sign = false;
         } else {
-            *this = this->modular_subtract(that);
+            *this = this->_subtract(that);
             sign = true;
         }
     }
     else if (sign && that.sign) {
-        this->modular_add(that);
+        this->_add(that);
         sign = true;
     }
 
@@ -79,28 +79,28 @@ big_integer& big_integer::operator+=(const big_integer &that) {
 
 big_integer& big_integer::operator-=(const big_integer &that) {
     if (!sign && !that.sign) {
-        if (this->modular_compare(that) < 0) {
-            *this = that.modular_subtract(*this);
+        if (this->_compare(that) < 0) {
+            *this = that._subtract(*this);
             sign = true;
         } else {
-            *this = this->modular_subtract(that);
+            *this = this->_subtract(that);
             sign = false;
         }
     }
     else if (!sign && that.sign) {
-        this->modular_add(that);
+        this->_add(that);
         sign = false;
     }
     else if (sign && !that.sign) {
-        this->modular_add(that);
+        this->_add(that);
         sign = true;
     }
     else if (sign && that.sign) {
-        if (this->modular_compare(that) <= 0) {
-            *this = that.modular_subtract(*this);
+        if (this->_compare(that) <= 0) {
+            *this = that._subtract(*this);
             sign = false;
         } else {
-            *this = this->modular_subtract(that);
+            *this = this->_subtract(that);
             sign = true;
         }
     }
@@ -109,15 +109,15 @@ big_integer& big_integer::operator-=(const big_integer &that) {
 }
 
 big_integer& big_integer::operator*=(const big_integer &that) {
-    size_t op_size = arr.size();
+    size_t op_size = _arr.size();
 
     big_integer ret;
 
     for (size_t i = 0; i < op_size; i++) {
-        ret += (that.mul_internal(arr[i])).shl_64_bitwise(i);
+        ret += (that._mul(_arr[i]))._shl_64(i);
     }
 
-    ret.shrink();
+    ret._shrink();
     ret.sign = (ret != 0) && (sign ^ that.sign);
     *this = ret;
 
@@ -125,12 +125,12 @@ big_integer& big_integer::operator*=(const big_integer &that) {
 }
 
 big_integer& big_integer::operator/=(const big_integer &that) {
-    *this = this->divide_mod(that).first;
+    *this = this->_divide_mod(that).first;
     return *this;
 }
 
 big_integer& big_integer::operator%=(const big_integer &that) {
-    *this = this->divide_mod(that).second;
+    *this = this->_divide_mod(that).second;
     return *this;
 }
 

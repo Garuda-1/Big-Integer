@@ -8,48 +8,48 @@
 big_integer operator&(const big_integer &a, const big_integer &b) {
     big_integer ret;
 
-    size_t op_size = max(a.arr.size(), b.arr.size()) + 1;
+    size_t op_size = max(a._arr.size(), b._arr.size()) + 1;
 
-    big_integer op0 = a.bitwise_convert(op_size);
-    big_integer op1 = b.bitwise_convert(op_size);
+    big_integer op0 = a._to_two_component(op_size);
+    big_integer op1 = b._to_two_component(op_size);
 
     for (size_t i = 0; i < op_size; i++) {
-        ret.arr.push_back(op0.arr[i] & op1.arr[i]);
+        ret._arr.push_back(op0._arr[i] & op1._arr[i]);
     }
-    ret = ret.bitwise_revert();
-    ret.shrink();
+    ret = ret._from_two_component();
+    ret._shrink();
     return ret;
 }
 
 big_integer operator|(const big_integer &a, const big_integer &b) {
     big_integer ret;
 
-    size_t op_size = max(a.arr.size(), b.arr.size()) + 1;
+    size_t op_size = max(a._arr.size(), b._arr.size()) + 1;
 
-    big_integer op0 = a.bitwise_convert(op_size);
-    big_integer op1 = b.bitwise_convert(op_size);
+    big_integer op0 = a._to_two_component(op_size);
+    big_integer op1 = b._to_two_component(op_size);
 
     for (size_t i = 0; i < op_size; i++) {
-        ret.arr.push_back(op0.arr[i] | op1.arr[i]);
+        ret._arr.push_back(op0._arr[i] | op1._arr[i]);
     }
-    ret = ret.bitwise_revert();
-    ret.shrink();
+    ret = ret._from_two_component();
+    ret._shrink();
     return ret;
 }
 
 big_integer operator^(const big_integer &a, const big_integer &b) {
     big_integer ret;
 
-    size_t op_size = max(a.arr.size(), b.arr.size()) + 1;
+    size_t op_size = max(a._arr.size(), b._arr.size()) + 1;
 
-    big_integer op0 = a.bitwise_convert(op_size);
-    big_integer op1 = b.bitwise_convert(op_size);
+    big_integer op0 = a._to_two_component(op_size);
+    big_integer op1 = b._to_two_component(op_size);
 
     for (size_t i = 0; i < op_size; i++) {
-        ret.arr.push_back(op0.arr[i] ^ op1.arr[i]);
+        ret._arr.push_back(op0._arr[i] ^ op1._arr[i]);
     }
-    ret = ret.bitwise_revert();
-    ret.shrink();
+    ret = ret._from_two_component();
+    ret._shrink();
     return ret;
 }
 
@@ -78,19 +78,19 @@ big_integer big_integer::operator~() const {
 
 big_integer operator<<(const big_integer &a, uint32_t shift) {
     big_integer ret(a);
-    ret.shl_64_bitwise(shift / 64);
+    ret._shl_64(shift / 64);
     shift %= 64;
     uint64_t carry = 0;
     uint64_t next_carry = 0;
 
-    for (unsigned long &i : ret.arr) {
+    for (unsigned long &i : ret._arr) {
         next_carry = (i >> (64 - shift));
         i = ((i << shift) + carry);
         carry = next_carry;
     }
 
     if (carry != 0) {
-        ret.arr.push_back(carry);
+        ret._arr.push_back(carry);
     }
 
     return ret;
@@ -98,7 +98,7 @@ big_integer operator<<(const big_integer &a, uint32_t shift) {
 
 big_integer operator>>(const big_integer &a, uint32_t shift) {
     big_integer ret(a);
-    ret.shr_64_bitwise(shift / 64);
+    ret._shr_64(shift / 64);
     bool tmp_sign = a.sign;
     ret.sign = false;
 
@@ -106,13 +106,13 @@ big_integer operator>>(const big_integer &a, uint32_t shift) {
     uint64_t carry = 0;
     uint64_t next_carry = 0;
 
-    for (size_t i = ret.arr.size() - 1; i + 1 > i; i--) {
-        next_carry = (ret.arr[i] << (64 - shift));
-        ret.arr[i] = ((ret.arr[i] >> shift) + carry);
+    for (size_t i = ret._arr.size() - 1; i + 1 > i; i--) {
+        next_carry = (ret._arr[i] << (64 - shift));
+        ret._arr[i] = ((ret._arr[i] >> shift) + carry);
         carry = next_carry;
     }
 
-    ret.shrink();
+    ret._shrink();
     if (tmp_sign) {
         ret = -ret - 1;
     }

@@ -70,27 +70,24 @@ public:
 
 private:
     big_integer(uint64_t val);
+    uint64_t _digit(size_t i) const;
+    void _shrink();
 
-    uint64_t digit_internal(size_t i) const;
+    void _add(const big_integer &that);
+    big_integer _subtract(const big_integer &that) const;
+    big_integer _mul(uint64_t val) const;
+    pair<big_integer, uint64_t> _div(uint64_t val) const;
+    int32_t _compare(const big_integer &that) const;
 
-    big_integer mul_internal(uint64_t val) const;
-    pair<big_integer, uint64_t> div_internal(uint64_t val) const;
+    big_integer& _shl_64(size_t n);
+    big_integer& _shr_64(size_t n);
+    big_integer _to_two_component(size_t len) const;
+    big_integer _from_two_component() const;
 
-    big_integer& shl_64_bitwise(size_t n);
-    big_integer& shr_64_bitwise(size_t n);
+    pair<big_integer, big_integer> _divide_mod(const big_integer &that) const;
+    uint64_t _normalize(big_integer &a, big_integer &b) const;
 
-    void modular_add(const big_integer &that);
-    big_integer modular_subtract(const big_integer &that) const;
-    int32_t modular_compare(const big_integer &that) const;
-    pair<big_integer, big_integer> divide_mod(const big_integer &that) const;
-
-    big_integer bitwise_convert(size_t len) const;
-    big_integer bitwise_revert() const;
-
-    void shrink();
-    uint64_t normalize(big_integer &a, big_integer &b) const;
-
-    vector<uint64_t> arr;
+    vector<uint64_t> _arr;
     bool sign;
 };
 

@@ -31,9 +31,14 @@ void big_integer::_add(const big_integer &that) {
     for (size_t i = 0; i < op_size; i++) {
         uint64_t d1 = this->_digit(i);
         uint64_t d2 = that._digit(i);
-        _arr[i] = (d1 + d2 + carry);
-        carry = ((numeric_limits<uint64_t>::max() - d1 < d2) ||
-                 (numeric_limits<uint64_t>::max() - d1 - d2 < (uint64_t) carry));
+        __asm__ (
+        "xor %%rdx, %%rdx;"
+        "add %%rbx, %%rax;"
+        "adc $0, %%rdx;"
+        "add %%rcx, %%rax;"
+        "adc $0, %%rdx;"
+        : "=a" (_arr[i]), "=d" (carry)
+        : "a" (d1), "b" (d2), "c" (carry));
     }
 
     if (carry) {
@@ -47,12 +52,21 @@ big_integer big_integer::_subtract(const big_integer &that) const {
     big_integer ret;
     bool borrow = false;
     size_t op_size = _arr.size();
+    ret._arr.reserve(op_size);
 
     for (size_t i = 0; i < op_size; i++) {
         uint64_t d1 = this->_digit(i);
         uint64_t d2 = that._digit(i);
-        ret._arr.push_back(d1 - d2 - (uint64_t) borrow);
-        borrow = (d1 < d2) || (d1 - d2 < (uint64_t) borrow);
+        uint64_t d;
+        __asm__ (
+        "xor %%rdx, %%rdx;"
+        "sbb %%rbx, %%rax;"
+        "adc $0, %%rdx;"
+        "sbb %%rcx, %%rax;"
+        "adc $0, %%rdx;"
+        : "=a" (d), "=d" (borrow)
+        : "a" (d1), "b" (d2), "c" (borrow));
+        ret._arr.push_back(d);
     }
 
     ret._shrink();
@@ -108,7 +122,7 @@ pair<big_integer, uint64_t> big_integer::_div(uint64_t val) const {
         uint64_t d1 = _digit(op_size - i - 1);
         uint64_t d0;
         __asm__ (
-        "div %%rbx"
+        "div %%rbx;"
         : "=a" (d0), "=d" (carry)
         : "a" (d1), "b" (val), "d" (carry)
         );
@@ -145,6 +159,8 @@ pair<big_integer, big_integer> big_integer::_divide_mod(const big_integer &that)
     size_t n = divisor._arr.size();
     size_t m = dividend._arr.size() - n;
 
+    ret._arr.reserve(m);
+
     big_integer aux(divisor);
     aux._shl_64(m);
 
@@ -164,6 +180,7 @@ pair<big_integer, big_integer> big_integer::_divide_mod(const big_integer &that)
             d._arr.resize(0);
             d._arr.push_back(numeric_limits<uint64_t>::max());
         }
+
         dividend -= d * aux;
         while (dividend < 0) {
             --d;
@@ -180,7 +197,7 @@ pair<big_integer, big_integer> big_integer::_divide_mod(const big_integer &that)
     return pair<big_integer, big_integer>(ret, dividend);
 }
 
-big_integer& big_integer::_shl_64(size_t n) {
+big_integer &big_integer::_shl_64(size_t n) {
     size_t old_size = _arr.size();
     _arr.resize(old_size + n, 0);
 
@@ -194,7 +211,7 @@ big_integer& big_integer::_shl_64(size_t n) {
     return *this;
 }
 
-big_integer& big_integer::_shr_64(size_t n) {
+big_integer &big_integer::_shr_64(size_t n) {
     size_t new_size = _arr.size() - n;
     for (size_t i = 0; i < new_size; i++) {
         _arr[i] = _arr[i + n];
@@ -211,7 +228,7 @@ big_integer big_integer::_to_two_component(size_t len) const {
     if (!sign) {
         ret._arr.resize(len, 0);
     } else {
-        for (unsigned long & i : ret._arr) {
+        for (unsigned long &i : ret._arr) {
             i = ~i;
         }
         ret._arr.resize(len, ~((uint64_t) 0));

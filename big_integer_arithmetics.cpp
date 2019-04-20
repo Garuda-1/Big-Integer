@@ -48,7 +48,7 @@ big_integer operator%(const big_integer &a, const big_integer &b) {
 
 big_integer& big_integer::operator+=(const big_integer &that) {
     if (!sign && !that.sign) {
-        this->_add(that);
+        this->_add(that, 0);
         sign = false;
     }
     else if (!sign && that.sign) {
@@ -70,7 +70,7 @@ big_integer& big_integer::operator+=(const big_integer &that) {
         }
     }
     else if (sign && that.sign) {
-        this->_add(that);
+        this->_add(that, 0);
         sign = true;
     }
 
@@ -88,11 +88,11 @@ big_integer& big_integer::operator-=(const big_integer &that) {
         }
     }
     else if (!sign && that.sign) {
-        this->_add(that);
+        this->_add(that, 0);
         sign = false;
     }
     else if (sign && !that.sign) {
-        this->_add(that);
+        this->_add(that, 0);
         sign = true;
     }
     else if (sign && that.sign) {
@@ -114,7 +114,7 @@ big_integer& big_integer::operator*=(const big_integer &that) {
     big_integer ret;
 
     for (size_t i = 0; i < op_size; i++) {
-        ret += (that._mul(_arr[i]))._shl_64(i);
+        ret._add(that._mul(_arr[i]), i);
     }
 
     ret._shrink();

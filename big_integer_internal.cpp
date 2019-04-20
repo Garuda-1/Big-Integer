@@ -23,13 +23,13 @@ uint64_t big_integer::_digit(size_t i) const {
     }
 }
 
-void big_integer::_add(const big_integer &that) {
+void big_integer::_add(const big_integer &that, const size_t insert_pos) {
     bool carry = false;
-    size_t op_size = max(_arr.size(), that._arr.size());
+    size_t op_size = max(_arr.size(), (that._arr.size() + insert_pos));
     _arr.resize(op_size, 0);
 
-    for (size_t i = 0; i < op_size; i++) {
-        uint64_t d1 = this->_digit(i);
+    for (size_t i = 0; i < op_size - insert_pos; i++) {
+        uint64_t d1 = this->_digit(i + insert_pos);
         uint64_t d2 = that._digit(i);
         __asm__ (
         "xor %%rdx, %%rdx;"
@@ -37,7 +37,7 @@ void big_integer::_add(const big_integer &that) {
         "adc $0, %%rdx;"
         "add %%rcx, %%rax;"
         "adc $0, %%rdx;"
-        : "=a" (_arr[i]), "=d" (carry)
+        : "=a" (_arr[i + insert_pos]), "=d" (carry)
         : "a" (d1), "b" (d2), "c" (carry));
     }
 
@@ -91,6 +91,7 @@ big_integer big_integer::_mul(uint64_t val) const {
     size_t op_size = _arr.size();
 
     big_integer res;
+    res._arr.reserve(op_size + 1);
 
     for (size_t i = 0; i < op_size; i++) {
         uint64_t d1 = _digit(i);

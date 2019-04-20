@@ -73,7 +73,7 @@ private:
     uint64_t _digit(size_t i) const;
     void _shrink();
 
-    void _add(const big_integer &that);
+    void _add(const big_integer &that, const size_t insert_pos);
     big_integer _subtract(const big_integer &that) const;
     big_integer _mul(uint64_t val) const;
     pair<big_integer, uint64_t> _div(uint64_t val) const;

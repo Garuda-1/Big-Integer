@@ -7,8 +7,8 @@
 
 
 #include <cstdint>
-#include <vector>
 #include <string>
+#include "optimized_vector.h"
 
 using namespace std;
 
@@ -73,7 +73,7 @@ private:
     uint64_t _digit(size_t i) const;
     void _shrink();
 
-    void _add(const big_integer &that, const size_t insert_pos);
+    void _add(const big_integer &that, size_t insert_pos);
     big_integer _subtract(const big_integer &that) const;
     big_integer _mul(uint64_t val) const;
     pair<big_integer, uint64_t> _div(uint64_t val) const;
@@ -87,7 +87,7 @@ private:
     pair<big_integer, big_integer> _divide_mod(const big_integer &that) const;
     uint64_t _normalize(big_integer &a, big_integer &b) const;
 
-    vector<uint64_t> _arr;
+    optimized_vector<uint64_t> _arr;
     bool sign;
 };
 

@@ -12,7 +12,7 @@ struct shared_pointer {
         }
 
         ~Aux() {
-            delete (ptr_);
+            operator delete[] (ptr_);
         }
 
         T *ptr_;
@@ -93,6 +93,17 @@ struct shared_pointer {
 
     T &operator[](size_t i) {
         return aux->ptr_[i];
+    }
+
+    const T &operator[](size_t i) const {
+        return aux->ptr_[i];
+    }
+
+    bool independent() const {
+        if (aux == nullptr) {
+            return false;
+        }
+        return aux->cnt_ == 1;
     }
 
 private:

@@ -11,10 +11,7 @@ big_integer::big_integer() {
 }
 
 big_integer::big_integer(const big_integer &that) {
-    _arr.resize(that._arr.size());
-    for (size_t i = 0; i < _arr.size(); i++) {
-        _arr[i] = that._arr[i];
-    }
+    _arr = that._arr;
     sign = that.sign;
 }
 

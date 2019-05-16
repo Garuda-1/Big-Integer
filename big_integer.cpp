@@ -7,10 +7,7 @@
 
 big_integer &big_integer::operator=(const big_integer &that) {
     if (this != &that) {
-        _arr.resize(that._arr.size());
-        for (size_t i = 0; i < _arr.size(); i++) {
-            _arr[i] = that._arr[i];
-        }
+        _arr = that._arr;
         sign = that.sign;
     }
     return *this;
@@ -20,6 +17,8 @@ string to_string(const big_integer &a) {
     string ret;
     uint64_t radix = 10;
     big_integer tmp(a);
+
+    tmp._arr.checkout();
 
     if (a == 0) {
         return "0";

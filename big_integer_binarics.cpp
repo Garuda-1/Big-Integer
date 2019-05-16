@@ -78,14 +78,15 @@ big_integer big_integer::operator~() const {
 
 big_integer operator<<(const big_integer &a, uint32_t shift) {
     big_integer ret(a);
+    ret._arr.checkout();
     ret._shl_64(shift / 64);
     shift %= 64;
     uint64_t carry = 0;
     uint64_t next_carry = 0;
 
-    for (unsigned long &i : ret._arr) {
-        next_carry = (i >> (64 - shift));
-        i = ((i << shift) + carry);
+    for (size_t i = 0; i < ret._arr.size(); i++) {
+        next_carry = (ret._arr[i] >> (64 - shift));
+        ret._arr[i] = ((ret._arr[i] << shift) + carry);
         carry = next_carry;
     }
 
@@ -98,6 +99,7 @@ big_integer operator<<(const big_integer &a, uint32_t shift) {
 
 big_integer operator>>(const big_integer &a, uint32_t shift) {
     big_integer ret(a);
+    ret._arr.checkout();
     ret._shr_64(shift / 64);
     bool tmp_sign = a.sign;
     ret.sign = false;

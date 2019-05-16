@@ -24,6 +24,7 @@ uint64_t big_integer::_digit(size_t i) const {
 }
 
 void big_integer::_add(const big_integer &that, const size_t insert_pos) {
+    _arr.checkout();
     bool carry = false;
     size_t op_size = max(_arr.size(), (that._arr.size() + insert_pos));
     _arr.resize(op_size, 0);
@@ -130,7 +131,9 @@ pair<big_integer, uint64_t> big_integer::_div(uint64_t val) const {
         res._arr.push_back(d0);
     }
 
-    reverse(res._arr.begin(), res._arr.end());
+    for (size_t i = 0; i < res._arr.size() / 2; i++) {
+        swap(res._arr[i], res._arr[res._arr.size() - i - 1]);
+    }
 
     res._shrink();
     return pair<big_integer, uint64_t>(res, carry);
@@ -153,6 +156,8 @@ pair<big_integer, big_integer> big_integer::_divide_mod(const big_integer &that)
 
     big_integer dividend(*this);
     big_integer divisor(that);
+    dividend._arr.checkout();
+    divisor._arr.checkout();
     dividend.sign = false;
     divisor.sign = false;
     uint64_t normalizer = _normalize(dividend, divisor);
@@ -163,6 +168,7 @@ pair<big_integer, big_integer> big_integer::_divide_mod(const big_integer &that)
     ret._arr.reserve(m);
 
     big_integer aux(divisor);
+    aux._arr.checkout();
     aux._shl_64(m);
 
     if (dividend >= aux) {
@@ -190,7 +196,9 @@ pair<big_integer, big_integer> big_integer::_divide_mod(const big_integer &that)
         ret._arr.push_back(d._digit(0));
     }
 
-    reverse(ret._arr.begin(), ret._arr.end());
+    for (size_t i = 0; i < ret._arr.size() / 2; i++) {
+        swap(ret._arr[i], ret._arr[ret._arr.size() - i - 1]);
+    }
     ret._shrink();
     ret.sign = (ret != 0) && (sign ^ that.sign);
     dividend /= normalizer;
@@ -199,6 +207,7 @@ pair<big_integer, big_integer> big_integer::_divide_mod(const big_integer &that)
 }
 
 big_integer &big_integer::_shl_64(size_t n) {
+    _arr.checkout();
     size_t old_size = _arr.size();
     _arr.resize(old_size + n, 0);
 
@@ -213,6 +222,7 @@ big_integer &big_integer::_shl_64(size_t n) {
 }
 
 big_integer &big_integer::_shr_64(size_t n) {
+    _arr.checkout();
     size_t new_size = _arr.size() - n;
     for (size_t i = 0; i < new_size; i++) {
         _arr[i] = _arr[i + n];
@@ -224,13 +234,14 @@ big_integer &big_integer::_shr_64(size_t n) {
 
 big_integer big_integer::_to_two_component(size_t len) const {
     big_integer ret(*this);
+    ret._arr.checkout();
     ret.sign = false;
 
     if (!sign) {
         ret._arr.resize(len, 0);
     } else {
-        for (unsigned long &i : ret._arr) {
-            i = ~i;
+        for (size_t i = 0; i < ret._arr.size(); i++) {
+            ret._arr[i] = ~ret._arr[i];
         }
         ret._arr.resize(len, ~((uint64_t) 0));
         ++ret;
@@ -241,13 +252,14 @@ big_integer big_integer::_to_two_component(size_t len) const {
 
 big_integer big_integer::_from_two_component() const {
     big_integer ret(*this);
+    ret._arr.checkout();
 
     bool tmp_sign = (!ret._arr.empty()) && (_arr[_arr.size() - 1] >> 63U);
 
     if (tmp_sign) {
         --ret;
-        for (unsigned long &i : ret._arr) {
-            i = ~i;
+        for (size_t i = 0; i < ret._arr.size(); i++) {
+            ret._arr[i] = ~ret._arr[i];
         }
         ret._shrink();
         ret.sign = tmp_sign;
@@ -257,6 +269,7 @@ big_integer big_integer::_from_two_component() const {
 }
 
 void big_integer::_shrink() {
+    _arr.checkout();
     size_t i = _arr.size();
     while (i > 0 && _arr[i - 1] == 0) --i;
     _arr.resize(i);

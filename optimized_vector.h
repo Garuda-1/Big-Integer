@@ -7,7 +7,7 @@
 
 template<typename T>
 class optimized_vector {
-    static const size_t _small_object_max_size = 8;
+    static const size_t _small_object_max_size = 2;
 
     size_t _size;
     size_t _allocated;

@@ -114,10 +114,12 @@ public:
                     }
                     convert_to_big_object(_allocated);
                 } else {
-                    while (_allocated < new_size) {
-                        _allocated *= 2;
+                    if (_allocated < new_size) {
+                        while (_allocated < new_size) {
+                            _allocated *= 2;
+                        }
+                        extend();
                     }
-                    extend();
                 }
             }
             while (_size < new_size) {
